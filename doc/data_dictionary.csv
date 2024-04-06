@@ -1,0 +1,7 @@
+record_number,study_code,site_id,site_address,patient_initials,patient_id,random_id,dob,pediatric_dob,collection_date,collection_time,gender,req_number,age,weight,weight_units,height,first_morning_void,visit_code,site_nurse_signature,test_names,test_codes,test_instructions,pregnancy,hemoglobin_a1c,fasting_status,optional_testing
+1,ABC-01J4,101,100 Bowling Lane,XXX,101-0001,2001,01 Jan 1974,,16 Mar 2024,10:15,F,M1010229179,50,,,,Y,UNS2,ABC,"Creatinine, Protein albumin, Chemistry, Urinalysis","10101, 32123, 46278, 88227","Words about how to collect specs, more words, and more instructions, and so on",,,N,YYNY
+2,DU-009-ZU,276,200 Kitten Drive,XXX,276-0087,3018,01 Jan 1920,,20 Mar 2024,7:10,M,M1892344277,,150,Pounds,172,,V721CB,GEF,Hematology,44442,"Instructions, and more",,,,
+3,773-AZXB,435,147 Storm Ave,ABC,AB02-435-0032,10101,,03 Dec 2010,18 Feb 2024,21:05,F,M2873940098,,,,,N,V501A,JLD,"Hematology, HbA1c, pregnancy","44442, 83004, 31879","Instructions, more, and more",N,N,,
+4,T94-YGJ,276,200 Kitten Drive,XXX,276-0089,3019,01 Jan 1990,,22 Mar 2024,11:16,M,L2873221546,,89.2,Kilograms,180,,V321B,KMC,Urinalysis,88227,Instructions,,,,
+5,PKOI-112233,435,147 Storm Ave,XXX,AB08-435-0033,10104,01 Jan 1972,,03 Apr 2024,18:55,M,M2834992784,,,,,Y,V980B,PTZ,PT/INR,10001,Instructions,,,,
+6,String,Integer,String,,String,Integer,String,String,String,Time,String,String,Integer,Float,String,Integer,String,String,String,String,String,String,String,String,String,String
