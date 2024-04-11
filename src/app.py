@@ -1,83 +1,90 @@
 import streamlit as st
+import datetime
+from db_construct import setup_db
 import sqlite3
 
-conn = sqlite3.connect(':memory:')
-cursor_obj = conn.cursor()
 
-cursor_obj.execute("DROP TABLE IF EXISTS PATIENT")
-cursor_obj.execute("DROP TABLE IF EXISTS STUDY")
-cursor_obj.execute("DROP TABLE IF EXISTS WEIGHT")
-cursor_obj.execute("DROP TABLE IF EXISTS HEIGHT")
-cursor_obj.execute("DROP TABLE IF EXISTS VISIT")
+if 'conn' not in st.session_state:
+    st.session_state['conn'] = setup_db()
 
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS PATIENT (
-                PK_Patient_ID INTEGER PRIMARY KEY,
-                FK_Patient_Weight_Units_ID INTEGER NOT NULL,
-                FK_Patient_Height_Units_ID INTEGER NOT NULL,
-                FK_VISIT_ID INTEGER NOT NULL,
-                FK_STUDY_ID INTEGER NOT NULL,
-                Patient_Init TEXT NOT NULL,
-                Patient_Weight INTEGER NOT NULL,                
-                Patient_Height INTEGER NOT NULL,                
-                Patient_DOB TEXT NOT NULL,
-                Patient_Age INTEGER NOT NULL,
-                PEDIATRIC_DOB TEXT,
-                STREET_ADDRESS TEXT,               
-                FOREIGN KEY(FK_STUDY_ID) REFERENCES STUDY(PK_STUDY_ID),
-                FOREIGN KEY(FK_VISIT_ID) REFERENCES VISIT(PK_VISIT_ID),
-                FOREIGN KEY(FK_Patient_Weight_Units_ID) REFERENCES WEIGHT_UNITS(PK_WEIGHT_UNITS_ID),
-                FOREIGN KEY(FK_Patient_Height_Units_ID) REFERENCES WEIGHT_UNITS(PK_HEIGHT_UNITS_ID)
-            )''')
+# Function to display a date input field
+def date_input(label, key):
+    return st.text_input(label, key=key, value='', placeholder='DD MMM YYYY')
 
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS HEIGHT_UNITS (
-                PK_HEIGHT_UNITS_ID INTEGER PRIMARY KEY,
-                HEIGHT_UNITS TEXT NOT NULL
-            )''')
 
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS WEIGHT_UNITS (
-                PK_WEIGHT_UNITS_ID INTEGER PRIMARY KEY,
-                WEIGHT_UNITS TEXT NOT NULL
-            )''')
+def create_new_record_form():
+    with st.form(key='data_entry_form'):
+        # Three-column layout for the top part of the form
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            first_name = st.text_input('First Name')
+        with col2:
+            last_name = st.text_input('Last Name')
+        with col3:
+            salutation = st.selectbox('Salutation', ('Mr.', 'Mrs.', 'Ms.', 'Dr.', 'Prof.'))
 
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS VISIT (
-                PK_VISIT_ID INTEGER PRIMARY KEY,
-                VISIT_CODE TEXT NOT NULL,
-                FIRST_MORNING_VOID TEXT NOT NULL,
-                SITE_NURSE_SIGNATURE  TEXT NOT NULL,
-                COLLECTION_DATE TEXT NOT NULL,
-                COLLECTION_TIME TEXT NOT NULL,
-                PREGNANCY TEXT NOT NULL,
-                HEMOGLOBIN_A1C TEXT NOT NULL,
-                FASTING_STATUS  TEXT NOT NULL,
-                OPTIONAL_TESTING TEXT NOT NULL
-            )''')
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            collection_time = st.time_input('Collection Time')
+        with col2:
+            collection_date = st.date_input('Collection Date', datetime.date.today())
 
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS STUDY (
-                PK_STUDY_ID INTEGER PRIMARY KEY,
-                COLLECTION_DATE TEXT NOT NULL,
-                COLLECTION_TIME TEXT NOT NULL,
-                SITE_NURSE_SIGNATURE  TEXT NOT NULL
-            )''')
-conn.commit()
-conn.close()
+        # The rest of the form in a single column layout
+        record_number = st.text_input('Record Number')
+        study_code = st.text_input('Study Code')
+        site_id = st.text_input('Site ID')
+        site_address = st.text_input('Site Address')
+        patient_initials = st.text_input('Patient Initials')
+        patient_id = st.text_input('Patient ID')
+        random_id = st.text_input('Random ID')
 
-# Title of the web page
-st.title('Customer Support Form')
+        col1, col2 = st.columns(2)
+        with col1:
+            dob = st.date_input('Date of Birth (DOB)', datetime.date.today())
+        with col2:
+            pediatric_dob = st.date_input('Pediatric Date of Birth', datetime.date.today())
+        
+        req_number = st.text_input('Request Number')
 
-# Select box for problem type
-problem_type = st.selectbox(
-    'Select your problem type',
-    ('Tech Support', 'Email', 'Phones', 'Other')
-)
+        # Submit button
+        submit_button = st.form_submit_button(label='Submit')
 
-# Input box for problem description
-problem_description = st.text_area("Describe your problem")
 
-# Submit button
-if st.button('Submit'):
-    # You can process the form data here
-    st.success(f"Your problem of type '{problem_type}' has been submitted successfully!")
-    st.write(f"Problem Description: {problem_description}")
-## from the virtualenv activated directory, run..
-#
 
+    if submit_button:
+        try:
+            insert_sql = '''INSERT INTO patient (first_name, last_name, salutation) VALUES (?, ?, ?)'''
+            st.session_state['conn'].execute(insert_sql, (first_name, last_name, salutation))
+            st.session_state['conn'].commit()
+            st.success("Form Submitted Successfully!")
+            st.write("### Form Data:")
+            st.write(f"Record Number: {record_number}")
+            # ... (display other form fields if necessary) ...
+        except sqlite3.Error as e:
+            st.error(f"An error occurred: {e}")
+
+
+def show_all_records():
+    records = st.session_state['conn'].execute("SELECT * FROM patient").fetchall()
+    st.write("All Records:", records)
+
+def transmit_data():
+    st.write("Data transmission logic goes here")
+
+# Main App Layout
+st.sidebar.image("./src/img/logo.png", use_column_width=True)
+st.sidebar.title("Navigation")
+choice = st.sidebar.radio("Choose a page:", ["New Record", "Show All Records", "Transmit"])
+
+if choice == "New Record":
+    st.header('New Specimen Entry')
+    create_new_record_form()
+
+elif choice == "Show All Records":
+    st.header('All Records')
+    show_all_records()
+
+elif choice == "Transmit":
+    st.header('Transmit Data')
+    # transmit_data()
+# streamlit run ./src/app.py 
