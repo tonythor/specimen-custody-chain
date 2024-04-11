@@ -88,4 +88,3 @@ elif choice == "Transmit":
     st.header('Transmit Data')
     # transmit_data()
 # streamlit run ./src/app.py 
-

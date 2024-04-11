@@ -53,3 +53,9 @@ MANIFEST
 lib/
 *.crc 
 *_SUCCESS 
+/.vs/specimen-custody-chain/FileContentIndex
+/.vs/specimen-custody-chain/v17
+/env/etc/jupyter
+/env/Scripts
+/env/share
+/.vs
