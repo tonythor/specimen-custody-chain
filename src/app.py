@@ -122,15 +122,34 @@ def create_new_record_form(form_key):
 
     if submit_button:
         try:
-            insert_sql = '''INSERT INTO patient (patient_id, patient_initials) VALUES (?, ?)'''
-            st.session_state['conn'].execute(insert_sql, (patient_id, patient_initials))
-            st.session_state['conn'].commit()
+            # Create a new connection for each thread
+            conn = sqlite3.connect(':memory:', check_same_thread=False)
+            cur = conn.cursor()
+
+            # Define and execute your SQL queries
+            patient_insert_sql = '''INSERT INTO patient (patient_id, patient_initials, salutation, patient_weight, patient_height, patient_dob, patient_age) VALUES (?, ?, ?, ?, ?, ?, ?)'''
+            cur.execute(patient_insert_sql, (patient_id, patient_initials, salutation, weight, height, dob, age))
+
+            visit_insert_sql = '''INSERT INTO visit (visit_code, collection_date, collection_time, first_morning_void, fasting_status, hemoglobin_a1c, site_nurse_signature) VALUES (?, ?, ?, ?, ?, ?, ?)'''
+            cur.execute(visit_insert_sql, (visit, collection_date, collection_time, fmv, fasting_status, blood_tests, signature))
+
+            study_insert_sql = '''INSERT INTO study (collection_date, collection_time, site_nurse_signature) VALUES (?, ?, ?)'''
+            cur.execute(study_insert_sql, (collection_date, collection_time, signature))
+
+            # Commit changes to the database
+            conn.commit()
+
             st.success("Form Submitted Successfully!")
             st.write("### Form Data:")
             # st.write(f"Record Number: {record_number}")
             # ... (display other form fields if necessary) ...
+
         except sqlite3.Error as e:
-            st.error(f"An error occurred: {e}")
+            # Handle any SQLite errors
+            print("SQLite Error:", e)
+        finally:
+            # Close the connection to release resources
+            conn.close()
 
 def show_all_records():
     records = st.session_state['conn'].execute("SELECT * FROM patient").fetchall()
