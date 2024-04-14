@@ -3,7 +3,7 @@ import logging
 
 def setup_db():
     # Connect to an in-memory SQLite database
-    conn = sqlite3.connect(':memory:')
+    conn = sqlite3.connect(':memory:', check_same_thread=False)
     cursor_obj = conn.cursor()
 
     # Execute SQL commands
