@@ -1,61 +1,73 @@
 import sqlite3
+import logging
 
-conn = sqlite3.connect(':memory:')
-cursor_obj = conn.cursor()
+def setup_db():
+    # Connect to an in-memory SQLite database
+    conn = sqlite3.connect(':memory:')
+    cursor_obj = conn.cursor()
 
-cursor_obj.execute("DROP TABLE IF EXISTS PATIENT")
-cursor_obj.execute("DROP TABLE IF EXISTS STUDY")
-cursor_obj.execute("DROP TABLE IF EXISTS WEIGHT")
-cursor_obj.execute("DROP TABLE IF EXISTS HEIGHT")
-cursor_obj.execute("DROP TABLE IF EXISTS VISIT")
+    # Execute SQL commands
+    sql_commands = [
+        "DROP TABLE IF EXISTS patient",
+        "DROP TABLE IF EXISTS study",
+        "DROP TABLE IF EXISTS weight_units",
+        "DROP TABLE IF EXISTS height_units",
+        "DROP TABLE IF EXISTS visit",
+        """
+        CREATE TABLE IF NOT EXISTS patient (
+            pk_patient_id INTEGER PRIMARY KEY,
+            patient_init TEXT,
+            first_name TEXT,
+            last_name TEXT,
+            salutation TEXT,
+            patient_weight INTEGER,
+            patient_height INTEGER,
+            patient_dob TEXT,
+            patient_age INTEGER,
+            pediatric_dob TEXT,
+            street_address TEXT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS height_units (
+            pk_height_units_id INTEGER PRIMARY KEY,
+            height_units TEXT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS weight_units (
+            pk_weight_units_id INTEGER PRIMARY KEY,
+            weight_units TEXT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS visit (
+            pk_visit_id INTEGER PRIMARY KEY,
+            visit_code TEXT,
+            first_morning_void TEXT,
+            site_nurse_signature TEXT,
+            collection_date TEXT,
+            collection_time TEXT,
+            pregnancy TEXT,
+            hemoglobin_a1c TEXT,
+            fasting_status TEXT,
+            optional_testing TEXT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS study (
+            pk_study_id INTEGER PRIMARY KEY,
+            collection_date TEXT,
+            collection_time TEXT,
+            site_nurse_signature TEXT
+        )
+        """
+    ]
 
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS PATIENT (
-                PK_Patient_ID INTEGER PRIMARY KEY,
-                FK_Patient_Weight_Units_ID INTEGER NOT NULL,
-                FK_Patient_Height_Units_ID INTEGER NOT NULL,
-                FK_VISIT_ID INTEGER NOT NULL,
-                FK_STUDY_ID INTEGER NOT NULL,
-                Patient_Init TEXT NOT NULL,
-                Patient_Weight INTEGER NOT NULL,                
-                Patient_Height INTEGER NOT NULL,                
-                Patient_DOB TEXT NOT NULL,
-                Patient_Age INTEGER NOT NULL,
-                PEDIATRIC_DOB TEXT,
-                STREET_ADDRESS TEXT,               
-                FOREIGN KEY(FK_STUDY_ID) REFERENCES STUDY(PK_STUDY_ID),
-                FOREIGN KEY(FK_VISIT_ID) REFERENCES VISIT(PK_VISIT_ID),
-                FOREIGN KEY(FK_Patient_Weight_Units_ID) REFERENCES WEIGHT_UNITS(PK_WEIGHT_UNITS_ID),
-                FOREIGN KEY(FK_Patient_Height_Units_ID) REFERENCES WEIGHT_UNITS(PK_HEIGHT_UNITS_ID)
-            )''')
+    for command in sql_commands:
+        cursor_obj.execute(command)
 
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS HEIGHT_UNITS (
-                PK_HEIGHT_UNITS_ID INTEGER PRIMARY KEY,
-                HEIGHT_UNITS TEXT NOT NULL
-            )''')
-
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS WEIGHT_UNITS (
-                PK_WEIGHT_UNITS_ID INTEGER PRIMARY KEY,
-                WEIGHT_UNITS TEXT NOT NULL
-            )''')
-
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS VISIT (
-                PK_VISIT_ID INTEGER PRIMARY KEY,
-                VISIT_CODE TEXT NOT NULL,
-                FIRST_MORNING_VOID TEXT NOT NULL,
-                SITE_NURSE_SIGNATURE  TEXT NOT NULL,
-                COLLECTION_DATE TEXT NOT NULL,
-                COLLECTION_TIME TEXT NOT NULL,
-                PREGNANCY TEXT NOT NULL,
-                HEMOGLOBIN_A1C TEXT NOT NULL,
-                FASTING_STATUS  TEXT NOT NULL,
-                OPTIONAL_TESTING TEXT NOT NULL
-            )''')
-
-cursor_obj.execute('''CREATE TABLE IF NOT EXISTS STUDY (
-                PK_STUDY_ID INTEGER PRIMARY KEY,
-                COLLECTION_DATE TEXT NOT NULL,
-                COLLECTION_TIME TEXT NOT NULL,
-                SITE_NURSE_SIGNATURE  TEXT NOT NULL
-            )''')
-conn.commit()
-conn.close()
+    # Commit the changes and close the connection
+    conn.commit()
+    logging.info("database set up")
+    return conn
