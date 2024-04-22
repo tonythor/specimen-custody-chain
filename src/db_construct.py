@@ -4,6 +4,7 @@ import logging
 def setup_db():
     # Connect to an in-memory SQLite database
     conn = sqlite3.connect(':memory:', check_same_thread=False)
+
     cursor_obj = conn.cursor()
 
     # Execute SQL commands
@@ -43,6 +44,7 @@ def setup_db():
         """
         CREATE TABLE IF NOT EXISTS visit (
             pk_visit_id INTEGER PRIMARY KEY,
+            patient_id INTEGER, 
             visit_code TEXT,
             first_morning_void TEXT,
             site_nurse_signature TEXT,

@@ -1,4 +1,4 @@
-python-dotenv
+https://app.datacamp.com/learn/courses/introduction-to-pysparkpython-dotenv
 #numpy==1.23.4
 pip
 ipython
