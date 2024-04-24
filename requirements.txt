@@ -9,3 +9,29 @@ requests
 jupyter
 jupyterlab
 streamlit
+
+
+[warn] /builds/comopany/aop/cardinality/classpath/.scala:118:35: comparing values of types Long and Null using `!=` will always yield true
+[warn]     r.getAs[Long](intersectEst) != null == c1 && ((c1 && r.getAs[Long](intersectEst) == 1) || !c1) &&
+[warn]        
+
+
+daacs_id=1,  
+record_pk=1,
+file_name=filenamed0001.txt, 
+input_column=Conventions
+w2v_vectors_random_forest_accuracy_predction=1
+fb_vectors_random_forest_accuracy_predction=2
+scikit_native_vectors_random_forest_accuracy_predction=2
+test_values=jsonString
+train_values=jsonString
+
+daacs_id=2,  
+record_pk=2,
+file_name=filenamed0002.txt, 
+input_column=Content_Suggestions
+w2v_vectors_random_forest_accuracy_predction=1
+fb_vectors_random_forest_accuracy_predction=2
+scikit_native_vectors_random_forest_accuracy_predction=2
+test_values=jsonString
+train_values=jsonString

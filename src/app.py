@@ -86,9 +86,7 @@ def create_new_record_form():
         # patient_initials = st.text_input('Patient Initials')
         # patient_id = st.text_input('Patient ID')
         random_id = st.text_input('Random ID')
-
-     
-        
+   
         req_number = st.text_input('Request Number')
 
         # Submit button
@@ -127,30 +125,6 @@ def create_new_record_form():
             st.error(f"An error occurred: {e}")
 
 
-    # if submit_button:
-    #     try:
-           
-    #         patient_insert_sql = '''INSERT INTO patient (patient_init, salutation, patient_weight, patient_height, patient_dob, patient_age,pediatric_dob,street_address,first_name,last_name) VALUES (?, ?, ?, ?, ?, ?,?,?,?,?)'''
-    #         st.session_state['conn'].execute(patient_insert_sql, ( patient_initials, salutation,weight,height, dob,age, pediatric_dob,street_address,first_name,last_name))
-    #         st.session_state['conn'].commit()
-
-    #         last_insert_id = st.session_state['conn'].last_insert_rowid()
-
-    #         visit_insert_sql ='''INSERT INTO visit(patient_id, visit_code,first_morning_void,pregnancy,hemoglobin_a1c,fasting_status,optional_testing) VALUES(?, ?, ?, ?, ?, ?, ?)'''
-    #         st.session_state['conn'].execute(visit_insert_sql, (last_insert_id, visit_code, fmv,pregnancy,hemoglobin_a1c,fasting_status, optional_testing))
-    #         st.session_state['conn'].commit()
-            
-    #         study_insert_sql ='''INSERT INTO study(collection_time,collection_date,site_nurse_signature) VALUES(?, ?, ?)'''
-    #         st.session_state['conn'].execute(study_insert_sql, (study_collection_time,study_collection_date,study_site_nurse_signature))
-    #         st.session_state['conn'].commit()
-
-    #         st.success("Form Submitted Successfully!")
-    #         st.write("### Form Data:")
-    #         st.write(f"Record Number: {record_number}")
-    #         # ... (display other form fields if necessary) ...
-    #     except sqlite3.Error as e:
-    #         st.error(f"An error occurred: {e}")
-
 
 def show_all_records():
     records = st.session_state['conn'].execute("SELECT * FROM visit").fetchall()
@@ -158,6 +132,51 @@ def show_all_records():
 
 def transmit_data():
     st.write("Data transmission logic goes here")
+
+def get_records():
+    cursor = st.session_state['conn'].cursor()
+    cursor.execute("SELECT * FROM patient JOIN visit ON patient.pk_patient_id = visit.patient_id")
+    return cursor.fetchall()
+
+def set_current_record(index):
+    st.session_state['current_record'] = st.session_state['records'][index]
+    st.session_state['current_index'] = index
+
+def next_record():
+    if st.session_state['current_index'] < len(st.session_state['records']) - 1:
+        set_current_record(st.session_state['current_index'] + 1)
+
+def prev_record():
+    if st.session_state['current_index'] > 0:
+        set_current_record(st.session_state['current_index'] - 1)
+        
+def create_browse_records_form():
+    if 'current_record' in st.session_state and st.session_state['records']:
+        record = st.session_state['current_record']
+
+        # This is just an example, you should use the correct indexes according to your database schema
+        with st.form(key='record_display_form'):
+            st.text_input('Patient Initials', value=record[1], key='patient_initials', disabled=True)
+            st.text_input('Patient ID', value=record[2], key='patient_id', disabled=True)
+            # ... create text inputs for other fields ...
+            # remember to set `disabled=True` if you don't want the fields to be editable
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button('Previous'):
+                prev_record()
+        with col2:
+            if st.button('Next'):
+                next_record()
+    else:
+        st.warning("No records found.")
+
+
+if 'records' not in st.session_state:
+    st.session_state['records'] = get_records()
+    if st.session_state['records']:
+        set_current_record(0)
+
 
 # Main App Layout
 st.sidebar.image("./src/img/logo.png", use_column_width=True)
@@ -170,7 +189,7 @@ if choice == "New Record":
 
 elif choice == "Show All Records":
     st.header('All Records')
-    show_all_records()
+    create_browse_records_form()
 
 elif choice == "Transmit":
     st.header('Transmit Data')
