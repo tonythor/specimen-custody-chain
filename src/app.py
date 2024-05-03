@@ -80,7 +80,10 @@ def create_new_record_form():
             else:
                 data_manager.insert_new_record(submission_data)
             st.success("Record saved successfully!")
-            del st.session_state['current_record']  # Clear the record after processing
+                # Check if 'current_record' exists in session_state before deleting it
+            if 'current_record' in st.session_state:
+                    del st.session_state['current_record']  # Clear the record after processing
+                # Redirect to a new record form
             st.session_state['page'] = 'new_record'  # Navigate back to a default view or refresh the current form view
 
 def transmit_data():
