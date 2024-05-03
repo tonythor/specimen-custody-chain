@@ -57,9 +57,6 @@ def create_new_record_form():
             site_nurse_signature = st.text_input('Site Nurse Signature', value=record.site_nurse_signature if record else '')
             study_site_nurse_signature = st.text_input('Study Site Nurse Signature', value=record.study_site_nurse_signature if record else '')
 
-
-
-
         submitted = st.form_submit_button('Submit')
         if submitted:
             submission_data = SubmissionData(
