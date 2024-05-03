@@ -83,6 +83,16 @@ def create_new_record_form():
             del st.session_state['current_record']  # Clear the record after processing
             st.session_state['page'] = 'new_record'  # Navigate back to a default view or refresh the current form view
 
+def transmit_data():
+    st.write("""
+    This screen transmits all records directly to the testing station. 
+    Feel free to transmit after specimens are shipped out for the day.
+    """)
+    if st.button("Transmit All Records"):
+        data_manager.wipe_all_records()
+        st.success("All records have been transmitted.")
+
+
 def show_all_records():
     records = data_manager.get_all_records()
     if not records.empty:
@@ -112,6 +122,7 @@ def main_navigation():
             show_all_records()
         elif page == "Transmit":
             st.header('Transmit Data')
+            transmit_data()
             # Placeholder for transmit data functionality
     else:
         st.session_state['page'] = 'new_record'
