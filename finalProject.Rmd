@@ -1,0 +1,65 @@
+---
+title: "Specimen Data Entry"
+author: "Tony Fraser, David Greer, & Julia Ferris"
+date: "2024-05-09"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Purpose
+
+- The purpose of our project was to learn how to use streamlit, a python framework that is used to create data apps
+
+Streamlit is used because of its extensive library used for advanced visualization methods and its ease of use
+
+- We hoped to create an application with streamlit where users can enter patient information when they collect samples and easily upload that information without the need for any paperwork
+
+
+## Problem & Solution
+
+- Problem:
+
+Some labs still write down patient information on paper. They fill out forms and mail those forms with the samples they collect. These handwritten forms are often filled with mistakes, and the forms may be lost or ruined in the process. The paper forms are also a problem because they require trees to be cut down.
+
+- Solution:
+
+Instead of using paper forms, the labs can start entering the data into a simple app that can upload their information directly to the database. The nurses and phlebotomists will take samples from patients, enter the information into the app, and attach a QR code to the samples to connect them to the information in the database. This should reduce mistakes, prevent the occurrence of lost or ruined forms, and eliminate the need to cut down trees for paper.
+
+## Specimen Data Entry Application
+
+- In the app, users will enter the patient and specimen information
+
+- They may add multiple entries at a time and return to each one for editing
+
+- Once all entries are complete, the transmit tab allows the user to submit all entries directly to the database
+
+## Example
+
+- I will show you an example of inputting some information and "uploading" all entries to the database
+
+## Code
+
+- app.py
+
+- data_manager.py
+
+- db_single_table.py
+
+- submission_data.py
+
+## Next Steps
+
+- The app would need to be hosted somewhere, such as on a website. The website would need to be secured because of the patient information, which can be done with an authentication system. This website cannot have any access to read information from the database. It may only have access to add to the database.
+
+- When submitting entries, they should be uploaded to a real database. Currently, the database is in-memory, so it does not remain after the app is closed.
+
+- If the app is used, the nurses and phlebotomists will need to learn how to use it. This should be simple.
+
+- The specimens should be associated with the data entries somehow. This can be done with one QR code per specimen. The QR codes should be permanently placed on the specimens. They can be secured with tape, for example.
+
+- The app would need to be audited for HIPAA compliance. HIPAA is the Health Insurance Portability and Accountability Act. This law ensures that protected health information is kept confidential. 
+
+## Thank you!
